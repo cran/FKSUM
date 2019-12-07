@@ -20,7 +20,7 @@ Type: Package
 
 Title:  Fast Kernel Sums
 
-Version:  0.1.0
+Version:  0.1.1
 
 Depends:  Rcpp (>= 0.12.16)
 
