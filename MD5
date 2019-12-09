@@ -1,14 +1,14 @@
-1d68d209c4df8d290adf3f1ed6d99aa2 *DESCRIPTION
+b4230eebcf034d00e90464340de1ce65 *DESCRIPTION
 8d72d31cf24d6203bd3f4b74bb56e8b0 *NAMESPACE
 69732274b4790df58a16f090dc4fb622 *R/PPR_WORKS.R
 657b63841497a3ec114e7acd807d8f33 *R/RcppExports.R
 714d9011cd65972d16a1efc14d43dab1 *R/fk_ICA.R
-37687f87ed0b4d5f3a7eb8e61d47a852 *R/fk_density.R
+c3999d0f2889541981bb7ef423f93eff *R/fk_density.R
 5adb33efdc2d1988f4f08dfdf63020ae *R/fk_mdh.R
 f47bf0dd61c55e991549fcc17081617b *R/fk_regression.R
 e21ab5f945bafa36fcf536a18a0a9d39 *R/fk_sum.R
-0b7034f5081968e249dc2bf0d233a923 *build/partial.rdb
-bbea7935c9efd3dc5a92a4556534af14 *man/FKSUM-package.Rd
+f6ceebc951e012585f4aa9e9783fbb4d *build/partial.rdb
+91573d79f09b02bab5ef94ed24043f0b *man/FKSUM-package.Rd
 9a863354aac3759b8605fda4fdaa8f6c *man/bin_wts.Rd
 208556002d933b9cc0dbef9ef4ccaf0a *man/cbin_alloc.Rd
 e2657f2a488d3328591a1c5331c37c4f *man/df_ica.Rd
@@ -46,4 +46,4 @@ b3db39434376058a026899f22174f97c *man/plot_kernel.Rd
 65f2b3edd870c9f108c241e9b16b6fda *man/whiten.Rd
 a949755ac12d3718c663aa1a6bdbf7e2 *src/FKSUM_CPP_FUNCTIONS.cpp
 7c8749c079291a3dbbc474a1c28eff80 *src/RcppExports.cpp
-4dc3dbbee077760b0ce38e69ae98f949 *src/mdh.cpp
+5c52eda72ad25009c35c231a7fa8e853 *src/mdh.cpp
