@@ -6,7 +6,7 @@
 }
 \usage{
 fk_ppr(X, y, nterms=1, hmult=1, betas=NULL, loss=NULL,
-    dloss=NULL, initialisation="fancy")
+    dloss=NULL, initialisation="lm", type = "loc-lin")
 }
 \arguments{
   \item{X}{a numeric matrix (num_data x num_dimensions) of covariates.}
@@ -14,11 +14,12 @@ fk_ppr(X, y, nterms=1, hmult=1, betas=NULL, loss=NULL,
   \item{nterms}{The number of terms in the additive regression model. The default is a single term.}
   \item{betas}{The coefficients in the expression of the kernel. See Hofmeyr (2019) for details. The
   default is the smooth order one kernel described in the paper.}
-  \item{hmult}{The bandwidth in the kernel smoother is set to sd(X\%*\%v0)/nrow(X)^.2*hmult, where v0
-  is the initial projection given to the optimiser.}
+  \item{hmult}{The bandwidth in the kernel smoother is set to eigen(cov(X))values[1]^.5/nrow(X)^.2*hmult during projection pursuit. The final value is based on leave-one-out cross validation on the optimal projection.}
   \item{loss}{The (additive) loss function to be used. Allows for generalised responses by specifying an appropriate likelihood/deviance function for the loss. Note: loss is to be minimised, so deviance or negative log-likelihood would be appropriate. If specified then must be a function of y and hy (the fitted values, yhat), returning a vector of "errors"" which are added as the total loss. The default is the squared error.}
   \item{dloss}{The derivative of the loss function. Also takes arguments y and hy, and returns the vector of partial derivatives of the loss w.r.t. hy.}
-  \item{initialisation}{Method use to initialise the projection vectors. Must be one of "fancy", "lm" and "random". The default is "fancy", which fits a linear model to the (scaled) univariate predictions of y on each X[,i]. "lm" is just a simple set of linear model coefficients. In both cases the linear model uses a LASSO penalty with very small "lambda", to ensure a solution is found. "random" uses random initialisation.}
+  \item{initialisation}{Method use to initialise the projection vectors. Must be one of "lm" and "random", or a function taking only arguments X and y, and returning a vector of length ncol(X). The default is "lm", which is a simple linear model with a small ridge to ensure a solution. "random" uses random initialisation.}
+  \item{type}{The type of regression estimator. Must be one of "loc-lin" for local linear regression, or "NW" for the Nadaray
+  Watson, or local constant regression. The default is local linear regression.}
 }
 \value{
   A named list with class fk_ppr containing

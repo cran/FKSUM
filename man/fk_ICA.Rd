@@ -5,7 +5,7 @@
   Performs minimum entropy projection pursuit
 }
 \usage{
-fk_ICA(X, ncomp = 1, beta = c(.25,.25), hmult=1.2, it=20, nbin = NULL)
+fk_ICA(X, ncomp = 1, beta = c(.25, .25), hmult = 1.5, it = 20, nbin = NULL)
 }
 \arguments{
   \item{X}{numeric data matrix (num_data x num_dimensions).}
