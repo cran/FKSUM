@@ -50,32 +50,17 @@ fhat_loc_lin <- fk_regression(x, y)
 fhat_NW <- fk_regression(x, y, type = 'NW')
 
 par(mfrow = c(2, 2))
-plot(x, y, col = rgb(.7, .7, .7, .3), pch = 16, xlab = 'x',
-    ylab = 'x', main = 'Local linear estimator with amise bandwidth')
-lines(xs, ftrue, col = 2, lwd = 3)
-lines(fhat_loc_lin, lty = 2, lwd = 2)
+plot(fhat_loc_lin, main = 'Local linear estimator with amise bandwidth')
 
-
-plot(x, y, col = rgb(.7, .7, .7, .3), pch = 16, xlab = 'x',
-    ylab = 'x', main = 'NW estimator with amise bandwidth')
-lines(xs, ftrue, col = 2, lwd = 3)
-lines(fhat_NW, lty = 3, lwd = 2)
-
+plot(fhat_NW, main = 'NW estimator with amise bandwidth')
 
 
 fhat_loc_lin <- fk_regression(x, y, h = 'cv')
 fhat_NW <- fk_regression(x, y, type = 'NW', h = 'cv')
 
-plot(x, y, col = rgb(.7, .7, .7, .3), pch = 16,, xlab = 'x',
-    ylab = 'x', main = 'Local linear estimator with cv bandwidth')
-lines(xs, ftrue, col = 2, lwd = 3)
-lines(fhat_loc_lin, lty = 2, lwd = 2)
+plot(fhat_loc_lin, main = 'Local linear estimator with cv bandwidth')
 
-
-plot(x, y, col = rgb(.7, .7, .7, .3), pch = 16,, xlab = 'x',
-    ylab = 'x', main = 'NW estimator with cv bandwidth')
-lines(xs, ftrue, col = 2, lwd = 3)
-lines(fhat_NW, lty = 3, lwd = 2)
+plot(fhat_NW, main = 'NW estimator with cv bandwidth')
 
 par(op)
 }

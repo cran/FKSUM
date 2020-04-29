@@ -21,6 +21,10 @@
 
 
 fk_regression <- function(x, y, h = 'amise', beta = NULL, from = NULL, to = NULL, ngrid = 1000, nbin = NULL, type = 'loc-lin'){
+  # check inputs
+  if(!is.numeric(x) || !is.numeric(y) || length(x)!=length(y)) stop('x and y must be numeric vectors of the same length')
+  if(any(is.na(c(x, y)))) stop('x and y cannot contain missing values')
+  if(!is.null(beta) && (!is.vector(beta) || !is.numeric(beta))) stop('beta must be a numeric vector')
 
   n <- length(x)
 
@@ -127,29 +131,32 @@ fk_regression <- function(x, y, h = 'amise', beta = NULL, from = NULL, to = NULL
     if(is.null(from)) from <- min(x)
     if(is.null(to)) to <- max(x)
     if(type=='loc-lin'){
-      list(x = seq(from, to, length = nbin) + mn, y = fk_loc_lin(xo, yo, h, beta, nbin = nbin, from = from, to = to), h = h)
+      structure(list(x_eval = seq(from, to, length = nbin) + mn, y_fitted = fk_loc_lin(xo, yo, h, beta, nbin = nbin, from = from, to = to), x = x + mn, y = y, h = h, type = type, betas = beta, call = match.call()), class = 'fk_regression')
     }
-    else{
-      list(x = seq(from, to, length = nbin) + mn, y = fk_NW(xo, yo, h, beta, nbin = nbin, from = from, to = to), h = h)
+    else if(type=='NW'){
+      structure(list(x_eval = seq(from, to, length = nbin) + mn, y_fitted = fk_NW(xo, yo, h, beta, nbin = nbin, from = from, to = to), x = x + mn, y = y, h = h, type = type, betas = beta, call = match.call()), class = 'fk_regression')
     }
+    else stop('type must be one of "loc-lin" and "NW"')
   }
   else if(!is.null(ngrid)){ # exact grid evaluation, hence x_eval is a grid and regression function estimated with nbin = NULL (default)
     if(is.null(from)) from <- xo[1]
     if(is.null(to)) to <- xo[n]
     if(type=='loc-lin'){
-      list(x = seq(from, to, length = ngrid) + mn, y = fk_loc_lin(xo, yo, h, beta, ngrid = ngrid, from = from, to = to), h = h)
+      structure(list(x_eval = seq(from, to, length = ngrid) + mn, y_fitted = fk_loc_lin(xo, yo, h, beta, ngrid = ngrid, from = from, to = to), x = x + mn, y = y, h = h, type = type, betas = beta, call = match.call()), class = 'fk_regression')
     }
-    else{
-      list(x = seq(from, to, length = ngrid) + mn, y = fk_NW(xo, yo, h, beta, ngrid = ngrid, from = from, to = to), h = h)
+    else if(type=='NW'){
+      structure(list(x_eval = seq(from, to, length = ngrid) + mn, y_fitted = fk_NW(xo, yo, h, beta, ngrid = ngrid, from = from, to = to), x = x + mn, y = y, h = h, type = type, betas = beta, call = match.call()), class = 'fk_regression')
     }
+    else stop('type must be one of "loc-lin" and "NW"')
   }
   else{ # exact evaluation at sample, hence both nbin and ngrid left as default (NULL) in regression computation
     if(type=='loc-lin'){
-      list(x = xo + mn, y = fk_loc_lin(xo, yo, h, beta), h = h)
+      structure(list(x_eval = xo + mn, y_fitted = fk_loc_lin(xo, yo, h, beta), x = x + mn, y = y, h = h, type = type, betas = beta, call = match.call()), class = 'fk_regression')
     }
-    else{
-      list(x = xo + mn, y = fk_NW(xo, yo, h, beta), h = h)
+    else if(type=="NW"){
+      structure(list(x_eval = xo + mn, y_fitted = fk_NW(xo, yo, h, beta), x = x + mn, y = y, h = h, type = type, betas = beta, call = match.call()), class = 'fk_regression')
     }
+    else stop('type must be one of "loc-lin" and "NW"')
   }
 }
 
@@ -262,4 +269,65 @@ fk_NW <- function(x, y, h, beta, nbin = NULL, ngrid = NULL, from = NULL, to = NU
     sKy <- ksum(x, y, x, h, beta, 1:n) - loo * beta[1] * y
     sKy / sK
   }
+}
+
+
+### Methods for class fk_regression
+
+plot.fk_regression <- function(x, main = NULL, ...){
+  if(is.null(main)){
+    main <- paste('fk_regression(', names(x$call)[2], ' = ', as.character(x$call)[2], sep = '')
+    if(length(x$call)>2) for(argnum in 3:length(x$call)) main <- paste(main, ', ', names(x$call)[argnum], ' = ', as.character(x$call)[argnum], sep = '')
+    main <- paste(main, ')', sep = '')
+  }
+  if(length(x$x) > 5000){
+    message('Large sample. Only showing a random subset of size 5000')
+    sm <- sample(1:length(x$x), 5000)
+    plot(x$x[sm], x$y[sm], main = main, xlab = 'x', ylab = 'y', ...)
+    if(length(x$x_eval) > 5000){
+      sme <- order(sample(1:length(x$x_eval)))
+      lines(x$x_eval[sme], x$y_fitted[sme], col = 2, lwd = 2)
+    }
+    else lines(x$x_eval, x$y_fitted, col = 2, lwd = 2)
+  }
+  else{
+    plot(x$x, x$y, main = main, xlab = 'x', ylab = 'y', ...)
+    lines(x$x_eval, x$y_fitted, col = 2, lwd = 2)
+  }
+}
+
+print.fk_regression <- function(x, ...){
+  cat('Call: \n \n')
+  print(x$call)
+  cat('\n')
+  cat(paste('Data: (x, y) (', length(x$x), ' obs.); bandwidth = ', round(x$h, 4), ' \n \n', sep = ''))
+}
+
+
+predict.fk_regression <- function(object, xtest = NULL, ...){
+  if(is.null(xtest)) xtest <- object$x
+
+  mn <- mean(object$x)
+
+  xtest <- xtest - mn
+  x <- object$x - mn
+
+  o <- order(x)
+
+  otest <- order(xtest)
+
+  if(object$type == 'loc-lin'){
+    sK <- ksum(x[o], numeric(length(x)) + 1, xtest[otest], object$h, object$betas)
+    sKx <- ksum(x[o], x[o], xtest[otest], object$h, object$betas)
+    sKy <- ksum(x[o], object$y[o], xtest[otest], object$h, object$betas)
+    sKx2 <- ksum(x[o], x[o]^2, xtest[otest], object$h, object$betas)
+    sKxy <- ksum(x[o], x[o] * object$y[o], xtest[otest], object$h, object$betas)
+    yhat <- (((sKx2 * sKy - sKx * sKxy) + (sK * sKxy - sKx * sKy) * xtest[otest]) / (sK * sKx2 - sKx^2))[rank(xtest)]
+  }
+  else{
+    sK <- ksum(x[o], numeric(length(x)) + 1, xtest[otest], object$h, object$betas)
+    sKy <- ksum(x[o], object$y[o], xtest[otest], object$h, object$betas)
+    yhat <- (sKy / sK)[rank(xtest)]
+  }
+  yhat
 }

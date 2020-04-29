@@ -74,6 +74,14 @@ fk_dfmdh <- function(w, X, h, beta, alpha, C, n_eval = 100){
 # $b = location of optimal hyperplane along v
 
 fk_mdh <- function(X, v0 = NULL, hmult = 1, beta = c(.25, .25), alphamax = 1){
+  # check inputs
+  if(!is.matrix(X)) stop('X must be a numeric matrix')
+  if(any(is.na(X))) stop('X cannot contain missing values')
+  if(!is.vector(beta) || !is.numeric(beta)) stop('beta must be a numeric vector')
+  if(!is.numeric(hmult) || length(hmult)>1 || hmult<0) stop('hmult must be a positive numeric')
+  if(!is.numeric(alphamax) || length(alphamax)>1 || alphamax<0) stop('alphamax must be a positive numeric')
+  if(!is.null(v0) && (!is.vector(v0) || length(v0)!=ncol(X))) stop('v0 must be a numeric vector of length ncol(X)')
+
   n <- nrow(X)
 
   # centralise data since objective and gradient computations require zero mean data
@@ -120,5 +128,27 @@ fk_mdh <- function(X, v0 = NULL, hmult = 1, beta = c(.25, .25), alphamax = 1){
     # increase size of feasible region and continue
     alpha <- alpha + .1
   }
-  list(v = v0, b = b)
+  structure(list(v = v0, b = b, X = sweep(X, 2, mn, '+'), h = h, call = match.call()), class = 'fk_mdh')
+}
+
+
+# Methods for class fk_mdh
+
+plot.fk_mdh <- function(x, ...){
+  op <- par(no.readonly = TRUE)
+  par(mfrow = c(1, 2))
+  x2 <- x$X - x$X%*%x$v%*%t(x$v)
+  v2 <- eigen(cov(x2))$vectors[,1]
+  plot(x$X%*%x$v, x$X%*%v2, main = 'Minimum density hyperplane', xlab = "Optimal projection", ylab = "First PC in Nullspace", ...)
+  abline(v = x$b, col = 2, lwd = 2)
+  plot(fk_density(x$X%*%x$v, h = x$h), main = 'Estimated density on optimal projection', ...)
+  abline(v = x$b, col = 2, lwd = 2)
+  par(op)
+}
+
+print.fk_mdh <- function(x, ...){
+  cat('Call: \n \n')
+  print(x$call)
+  cat('\n')
+  cat(paste("Data: X (", nrow(x$X), " obs. in ", ncol(x$X), " dimensions); \n", sep = ''))
 }

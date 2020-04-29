@@ -1,7 +1,7 @@
 Package: FKSUM
 Type: Package
 Title: Fast Kernel Sums
-Version: 0.1.3
+Version: 0.1.4
 Author: David P. Hofmeyr
 Maintainer: David P. Hofmeyr <dhofmeyr@sun.ac.za>
 Description: Implements the method of Hofmeyr, D.P. (2019) <DOI:10.1109/TPAMI.2019.2930501> for fast evaluation of univariate kernel smoothers based on recursive computations.
@@ -15,6 +15,6 @@ Imports: rARPACK, MASS
 LinkingTo: Rcpp, RcppArmadillo
 LazyData: true
 NeedsCompilation: yes
-Packaged: 2020-01-06 14:23:15 UTC; david
+Packaged: 2020-04-29 06:02:14 UTC; david
 Repository: CRAN
-Date/Publication: 2020-01-07 08:40:16 UTC
+Date/Publication: 2020-04-29 06:30:02 UTC

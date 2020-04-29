@@ -131,6 +131,15 @@ df_ica <- function(w, X, h, betas, nbin = NULL){
 
 
 fk_ICA <- function(X, ncomp = 1, beta = c(.25, .25), hmult = 1.5, it = 20, nbin = NULL){
+  # check inputs
+  if(!is.matrix(X)) stop('X must be a numeric matrix')
+  if(any(is.na(X))) stop('X cannot contain missing values')
+  if(!is.numeric(ncomp)) stop('ncomp must be a positive natural number')
+  if(!is.vector(beta) || !is.numeric(beta)) stop('beta must be a numeric vector')
+  if(!is.numeric(hmult) || length(hmult)>1 || hmult<0) stop('hmult must be a positive numeric')
+  if(!is.numeric(it)) stop('the number of iterations (it) must be a positive natural number')
+  if(!is.null(nbin) && !is.numeric(nbin)) stop('nbin must be a positive natural number')
+
   dim <- ncomp
   n <- nrow(X)
 
@@ -197,7 +206,7 @@ fk_ICA <- function(X, ncomp = 1, beta = c(.25, .25), hmult = 1.5, it = 20, nbin 
     V[,i] <- v0
   }
   V[,dim] <- Null(V[,1:(dim-1)])
-  list(X = X, K = W$E$vectors[,1:dim] %*% diag(1 / sqrt(W$E$values[1:dim])), W = V, S = W$Y %*% V)
+  structure(list(X = X, K = W$E$vectors[,1:dim] %*% diag(1 / sqrt(W$E$values[1:dim])), W = V, S = W$Y %*% V, call = match.call()), class = 'fk_ICA')
 }
 
 
@@ -224,3 +233,21 @@ whiten <- function(X, ncomp){
   list(E = E, Y = Y)
 }
 
+plot.fk_ICA <- function(x, ...){
+  op <- par(no.readonly = TRUE)
+  par(mfrow = c(1, 2))
+  for(comp in 1:ncol(x$S)){
+    readline("Press [Enter] to view the next component plot. Press [Esc] to exit.")
+    plot(x$S[,comp], main = paste('Plot of component ', comp, sep = ''), xlab = 'index', ylab = 'Component value', ...)
+    plot(fk_density(x$S[,comp]), main = paste('Esimated density of component ', comp, sep = ''), ...)
+  }
+  par(op)
+}
+
+print.fk_ICA <- function(x, ...){
+  cat('Call: \n \n')
+  print(x$call)
+  cat('\n')
+  cat(paste("Data: X (", nrow(x$X), " obs. in ", ncol(x$X), " dimensions); \n", sep = ''))
+  cat(paste("Number of estimated source components = ", ncol(x$S),  "\n", sep = ''))
+}

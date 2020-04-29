@@ -183,6 +183,17 @@ df_ppr <- function(v, X, y, h, betas, loss = NULL, dloss = NULL, type = 'loc-lin
 
 
 fk_ppr <- function(X, y, nterms = 1, hmult = 1, betas = NULL, loss = NULL, dloss = NULL, initialisation = 'lm', type = 'loc-lin'){
+  # check inputs
+  if(!is.matrix(X)) stop('X must be a numeric matrix')
+  if(!is.numeric(y) || length(y)!=nrow(X)) stop('y should be a numeric vector of length nrow(X)')
+  if(any(is.na(c(X, y)))) stop('X and y cannot contain missing values')
+  if(!is.null(betas) && (!is.vector(betas) || !is.numeric(betas))) stop('betas must be a numeric vector')
+  if(!is.numeric(hmult) || length(hmult)>1 || hmult<0) stop('hmult must be a positive numeric')
+  if(!is.null(loss) && !is.function(loss)) stop('loss must be a function to compute the losses from the pairs in y and yhat')
+  if(!is.null(dloss) && !is.function(dloss)) stop('dloss must be a function to compute the partial derivatives of the total loss w.r.t. yhat, from arguments y and yhat')
+  if(!initialisation%in%c('lm', 'random') && !is.function(initialisation)) stop('initialisation must be one of "lm" and "random" or a function of X and y returning a vector of length ncol(X)')
+  if(!type%in%c('loc-lin', 'NW')) stop('type must be one of "loc-lin" and "NW"')
+
   # set-up and compute necessary parameters
   n <- nrow(X)
   d <- ncol(X)
@@ -192,6 +203,10 @@ fk_ppr <- function(X, y, nterms = 1, hmult = 1, betas = NULL, loss = NULL, dloss
   # r will be used to represent the residuals remaining for fitting each component
   # the first component is fit to the centralised response values
   r <- y - mu
+
+  # resids is used to store the residuals used to obtain each component
+
+  resids <- matrix(0, nterms, n)
 
   # computation is slightly more stable for covariates of smaller relative magnitude
   X <- sweep(X, 2, mu_X, '-')
@@ -232,16 +247,22 @@ fk_ppr <- function(X, y, nterms = 1, hmult = 1, betas = NULL, loss = NULL, dloss
     # compute the fitted values for the current component
     fitted[tm,] <- kLLreg(X %*% vs[tm,], r, h, betas, type)
 
+    # store the residuals used to obtain the projection
+    resids[tm,] <- r
+
     # update the residuals to be used for the subsequent component
     r <- r - fitted[tm,]
 
     hs[tm] <- h
   }
   # return the list with all the parts of the model, and necessary parameters/arguments, and set its class
-  sol <- list(mu = mu, mu_X = mu_X, y = y, X = X, hs = hs, vs = vs, fitted = fitted, betas = betas, type = type)
-  class(sol) <- "fk_ppr"
-  sol
+  structure(list(mu = mu, mu_X = mu_X, y = y, X = X, hs = hs, vs = vs, fitted = fitted, res = resids, betas = betas, type = type, nterms = nterms, call = match.call()), class = "fk_ppr")
 }
+
+
+# Methods for class fk_ppr:
+
+
 
 # predict.fk_ppr is the S3 method for the class "fk_ppr", and determines the predictions from a model output from
 # the function fk_ppr on test data
@@ -281,18 +302,37 @@ predict.fk_ppr <- function(object, Xtest = NULL, ...){
     if(object$type == 'loc-lin'){
       sK <- ksum(p[o], numeric(n) + 1, ptest[otest], h, betas)
       sKx <- ksum(p[o], p[o], ptest[otest], h, betas)
-      sKy <- ksum(p[o], object$fitted[tm, o], ptest[otest], h, betas)
+      sKy <- ksum(p[o], object$res[tm, o], ptest[otest], h, betas)
       sKx2 <- ksum(p[o], p[o]^2, ptest[otest], h, betas)
-      sKxy <- ksum(p[o], p[o] * object$fitted[tm, o], ptest[otest], h, betas)
+      sKxy <- ksum(p[o], p[o] * object$res[tm, o], ptest[otest], h, betas)
       yhat <- yhat + (((sKx2 * sKy - sKx * sKxy) + (sK * sKxy - sKx * sKy) * ptest[otest]) / (sK * sKx2 - sKx^2))[rank(ptest)]
     }
     else{
       sK <- ksum(p[o], numeric(n) + 1, ptest[otest], h, betas)
-      sKy <- ksum(p[o], object$fitted[tm,o], ptest[otest], h, betas)
+      sKy <- ksum(p[o], object$res[tm,o], ptest[otest], h, betas)
       yhat <- yhat + (sKy / sK)[rank(ptest)]
     }
   }
 
   # return the predicted values
   yhat
+}
+
+
+plot.fk_ppr <- function(x, term = NULL, ...){
+  if(is.null(term)){
+    plot(colSums(x$fitted) + mean(x$y), x$y - colSums(x$fitted) - mean(x$y), main = 'Residuals vs. Fitted Values', xlab = 'Fitted Values', ylab = 'Residuals', ...)
+  }
+  else{
+    plot(x$X%*%x$vs[term,], x$res[term,], main = paste('Term ', term, sep = ''), xlab = "x'v", ylab = "Fitted Value", ...)
+    points(x$X%*%x$vs[term,], x$fitted[term,], col = 2)
+  }
+}
+
+print.fk_ppr <- function(x, ...){
+  cat('Call: \n \n')
+  print(x$call)
+  cat('\nGoodness of fit: \n')
+  cat(paste(x$nterms, 'terms \n'))
+  cat(paste('RSS = ', round(sum((x$y - colSums(x$fitted) - mean(x$y))^2), 4), '\n'))
 }

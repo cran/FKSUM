@@ -13,6 +13,12 @@
 # with first column the kernel sums and second column the kernel derivative sums if type  is 'both'
 
 fk_sum <- function(x, omega, h, x_eval = NULL, beta = c(.25, .25), nbin = NULL, type = "ksum"){
+  # check inputs
+  if(!is.numeric(x) || !is.numeric(omega) || length(x)!=length(omega)) stop('x and omega must be numeric vectors of the same length')
+  if(any(is.na(c(x, omega)))) stop('x and omega cannot contain missing values')
+  if(!is.vector(beta) || !is.numeric(beta)) stop('beta must be a numeric vector')
+  if(!is.numeric(h) || h<0 || length(h)!=1) stop('h must be a positive numeric')
+
   n <- length(x)
 
   # computation is slightly more stable for smaller magnitude kernel locations, so centralise x at zero
@@ -32,6 +38,7 @@ fk_sum <- function(x, omega, h, x_eval = NULL, beta = c(.25, .25), nbin = NULL, 
       else if(type=="both") kndksum(xo, omo, x, h, beta, match(x, xo))
     }
     else{
+      if(!is.numeric(x_eval)) stop('x_eval must be a numeric vector')
       # evaluation points supplied, so subtract mean of x from these as well and sort, before computing sums
       x_eval <- x_eval - mn
       o_eval <- order(x_eval)
@@ -51,6 +58,7 @@ fk_sum <- function(x, omega, h, x_eval = NULL, beta = c(.25, .25), nbin = NULL, 
       else if(type == "both") kndksum(xo, omo, x, h, beta, cbin_alloc(x, nbin, xo[1], xo[nbin]))
     }
     else{
+      if(!is.numeric(x_eval)) stop('x_eval must be a numeric vector')
       # evaluation points supplied, so subtract mean of x from these as well, before computing sums
       x_eval <- x_eval - mn
       if(type == "ksum") ksum(xo, omo, x_eval, h, beta, cbin_alloc(x_eval, nbin, xo[1], xo[nbin]))

@@ -67,10 +67,9 @@ abline(v = mdh$b, col = 2)
 plot(X\%*\%eigen(cov(X))$vectors[,1:2], xlab = '1st principal component',
     ylab = '2nd principal component', main = 'PCA plot')
 
-plot(fk_density(X\%*\%mdh$v), type = 'l', xlab = 'x', ylab = 'f(x)')
+plot(fk_density(X\%*\%mdh$v))
 abline(v = mdh$b, col = 2)
-plot(fk_density(X\%*\%eigen(cov(X))$vectors[,1]), type = 'l',
-    xlab = 'x', ylab = 'f(x)')
+plot(fk_density(X\%*\%eigen(cov(X))$vectors[,1]))
 
 par(op)
 }

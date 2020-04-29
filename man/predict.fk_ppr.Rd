@@ -1,6 +1,5 @@
 \name{predict.fk_ppr}
 \alias{predict.fk_ppr}
-\alias{predict}
 \title{Predict method for class fk_ppr}
 \description{
   Standard prediction method for regression models, specific to outputs from the fk_ppr() function. See help(fk_ppr) for more details on the model.

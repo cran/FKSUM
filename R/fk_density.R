@@ -15,6 +15,11 @@
 # $h bandwidth used
 
 fk_density <- function(x, h = 'Silverman', h_adjust = 1, beta = NULL, from = NULL, to = NULL, ngrid = 1000, nbin = NULL, x_eval = NULL){
+  # check inputs
+  if(!is.numeric(x)) stop('x must be a numeric vector')
+  if(any(is.na(x))) stop('x cannot contain missing values')
+  if(!is.null(beta) && (!is.vector(beta) || !is.numeric(beta))) stop('beta must be a numeric vector')
+  if(!is.numeric(h_adjust) || length(h_adjust)>1 || h_adjust<0) stop('h_adjust must be a positive numeric')
 
   n <- length(x)
 
@@ -71,6 +76,8 @@ fk_density <- function(x, h = 'Silverman', h_adjust = 1, beta = NULL, from = NUL
   # three possibilities are binned, grid evaluation or neither
   if(!is.null(nbin)){ # binning
 
+    if(!is.numeric(nbin)) stop('nbin must be positive natural number. Suggest at least 200')
+
     # establish range for grid of bin locations
     if(is.null(from)) from <- min(x) - 6 * h
     if(is.null(to)) to <- max(x) + 6 * h
@@ -93,6 +100,8 @@ fk_density <- function(x, h = 'Silverman', h_adjust = 1, beta = NULL, from = NUL
     }
     else{
 
+      if(!is.numeric(x_eval)) stop('x_eval must be a numeric vector')
+
       # determine location of evaluation points in bins
       alloc <- cbin_alloc(x_eval, nbin, from, to)
 
@@ -102,6 +111,8 @@ fk_density <- function(x, h = 'Silverman', h_adjust = 1, beta = NULL, from = NUL
     }
   }
   else if(!is.null(ngrid) && is.null(x_eval)){ # exact evaluation on a grid
+
+    if(!is.numeric(ngrid)) stop('ngrid must be a positive natural number')
 
     # establish range for grid
     if(is.null(from)) from <- xo[1] - 6 * h
@@ -119,6 +130,7 @@ fk_density <- function(x, h = 'Silverman', h_adjust = 1, beta = NULL, from = NUL
       xe <- xo
     }
     else{ # otherwise ensure evaluation points are sorted for fast kernel summing
+      if(!is.numeric(x_eval)) stop('x_eval must be a numeric vector')
       xs <- x_eval
       if(is.unsorted(x_eval)) xe <- sort(x_eval)
       else xe <- x_eval
@@ -133,5 +145,24 @@ fk_density <- function(x, h = 'Silverman', h_adjust = 1, beta = NULL, from = NUL
   y[is.na(y) | !is.finite(y)] <- 1e-300
 
   # return evaluation points (ensure to add the mean which was subtracted initially) and corresponding density values, plus bandwidth
-  list(x = xs + mn, y = y, h = h)
+  structure(list(x = xs + mn, y = y, h = h, call = match.call(), n = n), class = "fk_density")
+}
+
+
+# Methods for class fk_density
+
+plot.fk_density <- function(x, main = NULL, ...){
+  if(is.null(main)){
+    main <- paste('fk_density(', names(x$call)[2], ' = ', as.character(x$call)[2], sep = '')
+    if(length(x$call)>2) for(argnum in 3:length(x$call)) main <- paste(main, ', ', names(x$call)[argnum], ' = ', as.character(x$call)[argnum], sep = '')
+    main <- paste(main, ')', sep = '')
+  }
+  plot(x$x, x$y, main = main, ylab = 'Density', xlab = paste('n = ', x$n, ', bandwidth = ', round(x$h, 4)), type = 'l', ...)
+}
+
+print.fk_density <- function(x, ...){
+  cat('Call: \n \n')
+  print(x$call)
+  cat('\n')
+  cat(paste('Data: x (', x$n, ' obs.); bandwidth = ', round(x$h, 4), ' \n \n', sep = ''))
 }
