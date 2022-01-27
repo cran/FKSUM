@@ -2,7 +2,7 @@
 \alias{fk_density}
 \title{Fast univariate kernel density estimation}
 \description{
-  Uses recursive formulation for kernel sums as described in Hofmeyr (2019) to evaluate kernel estimate of the density exactly. Binning approximation also available for faster computation if needed. Default is exact evaluation on a grid, but evaluation at an arbitrary collection of points is possible.
+  Uses recursive formulation for kernel sums as described in Hofmeyr (2021) to evaluate kernel estimate of the density exactly. Binning approximation also available for faster computation if needed. Default is exact evaluation on a grid, but evaluation at an arbitrary collection of points is possible.
 }
 \usage{
 fk_density(x, h = 'Silverman', h_adjust = 1, beta = NULL, from = NULL,
@@ -27,7 +27,7 @@ fk_density(x, h = 'Silverman', h_adjust = 1, beta = NULL, from = NULL,
   \item{$h}{the value of the bandwidth.}
 }
 \references{
-Hofmeyr, D.P. (2019) "Fast exact evaluation of univariate kernel sums", \emph{IEEE Transactions on Pattern Analysis and Machine Intelligence}, in press.
+Hofmeyr, D.P. (2021) "Fast exact evaluation of univariate kernel sums", \emph{IEEE Transactions on Pattern Analysis and Machine Intelligence}, 43(2), 447-458.
 
 Silverman, B. (1986) \emph{Density estimation for statistics and data analysis}, volume 26. CRC press.
 }

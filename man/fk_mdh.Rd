@@ -24,7 +24,7 @@ fk_mdh(X, v0 = NULL, hmult = 1, beta = c(.25,.25), alphamax = 1)
 \references{
 Pavlidis N.G., Hofmeyr D.P., Tasoulis S.K. (2016) "Minimum Density Hyperplanes", \emph{Journal of Machine Learning Research}, 17(156), 1–33.
 
-Hofmeyr, D.P. (2019) "Fast exact evaluation of univariate kernel sums", \emph{IEEE Transactions on Pattern Analysis and Machine Intelligence}, in press.
+Hofmeyr, D.P. (2021) "Fast exact evaluation of univariate kernel sums", \emph{IEEE Transactions on Pattern Analysis and Machine Intelligence}, 43(2), 447-458.
 }
 \examples{
 op <- par(no.readonly = TRUE)

@@ -127,17 +127,24 @@ fk_density <- function(x, h = 'Silverman', h_adjust = 1, beta = NULL, from = NUL
   else{ # exact evaluation at non-grid locations
     if(is.null(x_eval)){ # default is evaluation at the sample points
       xs <- x
-      xe <- xo
+
+      # evaluate density at evaluation points
+      y <- ksum(xo, rep(1, n), xo, h, beta)[invPerm(o)] / n / h
     }
     else{ # otherwise ensure evaluation points are sorted for fast kernel summing
       if(!is.numeric(x_eval)) stop('x_eval must be a numeric vector')
       xs <- x_eval
-      if(is.unsorted(x_eval)) xe <- sort(x_eval)
-      else xe <- x_eval
+      if(is.unsorted(x_eval)){
+        oe <- order(x_eval)
+        # evaluate density at evaluation points
+        y <- ksum(xo, rep(1, n), x_eval[oe], h, beta)[invPerm(oe)] / n / h
+      }
+      else{
+        # evaluate density at evaluation points
+        y <- ksum(xo, rep(1, n), x_eval, h, beta) / n / h
+      }
     }
 
-    # evaluate density at evaluation points
-    y <- ksum(xo, rep(1, n), xe, h, beta)[match(xs, xe)] / n / h
   }
 
   # in cases where x_eval contains values very far from actual sample, then numerical issues can make the outputs from c++ functions include NA or +- Inf. We set these to very small positive value

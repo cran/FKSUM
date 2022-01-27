@@ -68,12 +68,12 @@ kLLreg <- function(x, y, h, betas, type){
     sKy <- ksum(xo, yo, xo, h, betas)
     sKx2 <- ksum(xo, xo^2, xo, h, betas)
     sKxy <- ksum(xo, xo * yo, xo, h, betas)
-    (((sKx2 * sKy - sKx * sKxy) + (sK * sKxy - sKx * sKy) * xo) / (sK * sKx2 - sKx^2))[rank(x)]
+    (((sKx2 * sKy - sKx * sKxy) + (sK * sKxy - sKx * sKy) * xo) / (sK * sKx2 - sKx^2))[rank(x, ties.method = "first")]
   }
   else{
     sK <- ksum(xo, numeric(n) + 1, xo, h, betas)
     sKy <- ksum(xo, yo, xo, h, betas)
-    (sKy / sK)[rank(x)]
+    (sKy / sK)[rank(x, ties.method = "first")]
   }
 }
 
@@ -305,12 +305,12 @@ predict.fk_ppr <- function(object, Xtest = NULL, ...){
       sKy <- ksum(p[o], object$res[tm, o], ptest[otest], h, betas)
       sKx2 <- ksum(p[o], p[o]^2, ptest[otest], h, betas)
       sKxy <- ksum(p[o], p[o] * object$res[tm, o], ptest[otest], h, betas)
-      yhat <- yhat + (((sKx2 * sKy - sKx * sKxy) + (sK * sKxy - sKx * sKy) * ptest[otest]) / (sK * sKx2 - sKx^2))[rank(ptest)]
+      yhat <- yhat + (((sKx2 * sKy - sKx * sKxy) + (sK * sKxy - sKx * sKy) * ptest[otest]) / (sK * sKx2 - sKx^2))[rank(ptest, ties.method = "first")]
     }
     else{
       sK <- ksum(p[o], numeric(n) + 1, ptest[otest], h, betas)
       sKy <- ksum(p[o], object$res[tm,o], ptest[otest], h, betas)
-      yhat <- yhat + (sKy / sK)[rank(ptest)]
+      yhat <- yhat + (sKy / sK)[rank(ptest, ties.method = "first")]
     }
   }
 

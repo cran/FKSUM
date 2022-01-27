@@ -14,7 +14,7 @@ plot_kernel(beta, type = 'l', ...)
   \item{...}{(optional) any additional arguments accepted by base plot() function.}
 }
 \references{
-Hofmeyr, D.P. (2019) "Fast exact evaluation of univariate kernel sums", \emph{IEEE Transactions on Pattern Analysis and Machine Intelligence}, in press.
+Hofmeyr, D.P. (2021) "Fast exact evaluation of univariate kernel sums", \emph{IEEE Transactions on Pattern Analysis and Machine Intelligence}, 43(2), 447-458.
 }
 \examples{
 ### Plot order 4 smooth kernel

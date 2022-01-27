@@ -18,7 +18,7 @@ h_K_to_Gauss(h, beta)
   positive numeric value, the bandwidth to be used for estimation using the Gaussian kernel.
 }
 \references{
-Hofmeyr, D.P. (2019) "Fast exact evaluation of univariate kernel sums", \emph{IEEE Transactions on Pattern Analysis and Machine Intelligence}, in press.
+Hofmeyr, D.P. (2021) "Fast exact evaluation of univariate kernel sums", \emph{IEEE Transactions on Pattern Analysis and Machine Intelligence}, 43(2), 447-458.
 }
 \examples{
 ### Use the package for data driven bandwidth for use with

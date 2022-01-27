@@ -24,7 +24,7 @@ fk_ICA(X, ncomp = 1, beta = c(.25, .25), hmult = 1.5, it = 20, nbin = NULL)
   \item{$S}{the estimated source matrix, S = sweep(X,2,colMeans(X),'-')\%*\%K\%*\%W.}
 }
 \references{
-Hofmeyr, D.P. (2019) "Fast exact evaluation of univariate kernel sums", \emph{IEEE Transactions on Pattern Analysis and Machine Intelligence}, in press.
+Hofmeyr, D.P. (2021) "Fast exact evaluation of univariate kernel sums", \emph{IEEE Transactions on Pattern Analysis and Machine Intelligence}, 43(2), 447-458.
 }
 \examples{
 op <- par(no.readonly = TRUE)

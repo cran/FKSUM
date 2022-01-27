@@ -2,7 +2,7 @@
 \alias{fk_regression}
 \title{Fast univariate kernel regression}
 \description{
-  Uses recursive formulation for kernel sums as described in Hofmeyr (2019) for exact evaluation of kernel regression estimate.  Both local linear and Nadaraya-Watson (Watson, 1964; Nadaraya, 1964) estimators are available. Binning approximation also available for faster computation if needed. Default is exact evaluation on a grid, but evaluation at sample points is also possible.
+  Uses recursive formulation for kernel sums as described in Hofmeyr (2021) for exact evaluation of kernel regression estimate.  Both local linear and Nadaraya-Watson (Watson, 1964; Nadaraya, 1964) estimators are available. Binning approximation also available for faster computation if needed. Default is exact evaluation on a grid, but evaluation at sample points is also possible.
 }
 \usage{
 fk_regression(x, y, h = 'amise', beta = NULL, from = NULL,
@@ -27,7 +27,7 @@ fk_regression(x, y, h = 'amise', beta = NULL, from = NULL,
   \item{$h}{the value of the bandwidth.}
 }
 \references{
-Hofmeyr, D.P. (2019) "Fast exact evaluation of univariate kernel sums", \emph{IEEE Transactions on Pattern Analysis and Machine Intelligence}, in press.
+Hofmeyr, D.P. (2021) "Fast exact evaluation of univariate kernel sums", \emph{IEEE Transactions on Pattern Analysis and Machine Intelligence}, 43(2), 447-458.
 
 Nadaraya, E.A. (1964) "On estimating regression." \emph{Theory of Probability \& Its Applications},9(1), 141–142.
 

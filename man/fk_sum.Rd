@@ -2,7 +2,7 @@
 \alias{fk_sum}
 \title{Fast Exact Kernel Sum Evaluation}
 \description{
-  Computes exact (and binned approximations of) kernel and kernel derivative sums with arbitrary weights/coefficients. Computation is based on the method of Hofmeyr (2019).
+  Computes exact (and binned approximations of) kernel and kernel derivative sums with arbitrary weights/coefficients. Computation is based on the method of Hofmeyr (2021).
 }
 \usage{
 fk_sum(x, omega, h, x_eval = NULL, beta = c(.25,.25),
@@ -21,7 +21,7 @@ fk_sum(x, omega, h, x_eval = NULL, beta = c(.25,.25),
   A vector (if type\%in\%c("ksum","dksum")) of kernel sums, or kernel derivative sums. A matrix (if type == "both") with kernel sums in its first column and kernel derivative sums in its second column.
 }
 \references{
-Hofmeyr, D.P. (2019) "Fast exact evaluation of univariate kernel sums", \emph{IEEE Transactions on Pattern Analysis and Machine Intelligence}, in press.
+Hofmeyr, D.P. (2021) "Fast exact evaluation of univariate kernel sums", \emph{IEEE Transactions on Pattern Analysis and Machine Intelligence}, 43(2), 447-458.
 }
 \examples{
 ### Compute density estimates directly with
