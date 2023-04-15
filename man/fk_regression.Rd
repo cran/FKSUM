@@ -29,7 +29,7 @@ fk_regression(x, y, h = 'amise', beta = NULL, from = NULL,
 \references{
 Hofmeyr, D.P. (2021) "Fast exact evaluation of univariate kernel sums", \emph{IEEE Transactions on Pattern Analysis and Machine Intelligence}, 43(2), 447-458.
 
-Nadaraya, E.A. (1964) "On estimating regression." \emph{Theory of Probability \& Its Applications},9(1), 141–142.
+Nadaraya, E.A. (1964) "On estimating regression." \emph{Theory of Probability and Its Applications},9(1), 141–142.
 
 Watson, G.S. (1964) "Smooth regression analysis." \emph{Sankhya: The Indian Journal of Statistics}, Series A, pp. 359–372.
 }

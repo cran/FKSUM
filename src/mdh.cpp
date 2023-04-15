@@ -42,8 +42,8 @@ double fk_md(NumericVector x, NumericVector y, NumericVector x_eval, double h, N
   tbetas[ord] = -betas[ord];
 
   /* miny is value of the minimum density hyperplane. To be updated during search. */
-  double miny;
-  double stdv; /* to be standard deviation of x */
+  double miny = 0;
+  double stdv = 0; /* to be standard deviation of x */
   NumericVector df(n_eval); /* to store the scaled density derivatives at x_eval */
   if(al > 1e-10){
     /* if al is very small, then assumed location of hyperplane at mean(x) = 0.
@@ -233,7 +233,7 @@ NumericVector fk_md_dp(NumericVector xo, NumericVector y, NumericVector x_eval, 
   NumericVector tbetas(ord + 1);
   for(int k = 0; k < ord; k++) tbetas[k] = (k + 1) * betas[k + 1] - betas[k];
   tbetas[ord] = -betas[ord];
-  double miny;
+  double miny = 0;
   double minx = 0; /* location of minimum density hyperplane, i.e., f(minx) = miny. Important for derivatives. */
   double stdv;
   NumericVector df(n_eval);
@@ -411,7 +411,7 @@ double fk_is_minim_md(NumericVector x, NumericVector y, NumericVector x_eval, do
   NumericVector tbetas(ord + 1);
   for(int k = 0; k < ord; k++) tbetas[k] = (k + 1) * betas[k + 1] - betas[k];
   tbetas[ord] = -betas[ord];
-  double miny;
+  double miny = 0;
   double minx = 0;
   double stdv;
   /* mode1 and modef are the leftmost and rightmost modes of the density estimated from x */
@@ -580,7 +580,7 @@ double fk_md_b(NumericVector x, NumericVector y, NumericVector x_eval, double h,
   NumericVector tbetas(ord + 1);
   for(int k = 0; k < ord; k++) tbetas[k] = (k + 1) * betas[k + 1] - betas[k];
   tbetas[ord] = -betas[ord];
-  double miny;
+  double miny = 0;
   double minx = 0;
   double stdv;
   NumericVector df(n_eval);
